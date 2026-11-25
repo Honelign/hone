@@ -67,7 +67,8 @@ hone_icons/
 └── scripts/
     ├── icons_catalog.json       # Exact node order & names from Figma API
     ├── map_all_categories.py    # Matches Figma exports to catalog names
-    └── build_package.py         # Runs svgtofont, builds TTF fonts & Dart classes
+    ├── build_package.py         # Runs svgtofont, builds TTF fonts & Dart classes
+    └── generate_icon_registry.py # Builds ../icon_finder/lib/icon_registry.dart
 ```
 
 ---
@@ -83,7 +84,19 @@ Therefore, inside each category folder:
 * `style=outline.svg` (Index 0) $\rightarrow$ Icon 0 in that category (`aiBrainTop`, etc.)
 * `style=outline-1.svg` (Index 1) $\rightarrow$ Icon 1 in that category (`aiBrainTop2`, etc.)
 
-**The Golden Export Rule**: As long as each Figma category/page is exported into its own folder in `icons_svg/<category>/`, our mapping script matches them with 100% accuracy.
+**Exact layer names, not positions**: Figma numbers each *exact* layer name separately (`style=bold`, `style=bold-1`, ...). The Figma file contains misspelled variant layers (`style=filled`, `style=oultine`, `style=two ton`, `style=llinear`, ...), `style=Default` standing in for a missing style, and icons whose variants use another property name (`Property 1=bold`). Each of these shifts the numbering of the following icons for that style only. `map_all_categories.py` therefore walks the catalog in layer order and counts every exact layer name, so the k-th `style=bold` layer maps to `style=bold-k.svg`.
+
+**Pages missing from the catalog are skipped**: `E-Commerce` is not in `icons_catalog.json`, so its exports are not mapped (guessing names from the inner layer files mislabelled them). Re-extract that page into the catalog, then re-run the mapping.
+
+**Font-ready SVGs**: icon fonts fill every glyph with the nonzero rule and cannot draw strokes. `build_package.py` converts each SVG with [picosvg](https://github.com/googlefonts/picosvg) first (`fill-rule="evenodd"` holes and strokes become plain filled paths); without it, ~14% of Outline icons rendered as solid shapes and stroked icons disappeared. Figma `NaN` path segments are rewritten as lines to their end points (or dropped) during mapping.
+
+**Unique ids across pages**: the same Figma name can appear on two pages (`logout` in Essential and Users) or twice on one page. Ids are unique across the whole package: a repeat gets `_2`, `_3`, ... in folder order, so no SVG overwrites another. `icons_clean/manifest.json` records each id's page and Figma name; the Icon Finder registry takes its categories from it.
+
+**Ambiguous Figma names**: the Figma file reuses one name for different drawings (52 cases, e.g. `square-euro` for the yen, pound and euro squares), and a few variants are identical drawings under two names (e.g. Bold `squareEuro` and `circleEuro`), which share one glyph. Both come from the design file; rename the layers in Figma to fix them.
+
+**Known limitation**: fonts are single-color, so the translucent layer of `Duotone` and `Bulk` icons renders fully opaque.
+
+Requirements: Node (`npx svgtofont`) and `pip install picosvg`.
 
 ---
 
@@ -101,7 +114,13 @@ Reads `icons_clean/`, executes `npx svgtofont` for each style, generates `.ttf` 
 python scripts/build_package.py
 ```
 
-### 3. Verify Package
+### 3. Update the Icon Finder
+Regenerates `../icon_finder/lib/icon_registry.dart` from `lib/src/` and `icons_clean/manifest.json`:
+```bash
+python scripts/generate_icon_registry.py
+```
+
+### 4. Verify Package
 ```bash
 flutter pub get
 dart analyze

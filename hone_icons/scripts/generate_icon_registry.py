@@ -2,10 +2,11 @@ import json
 import re
 from pathlib import Path
 
-BASE_DIR = Path("hone_icons")
-CATALOG_PATH = BASE_DIR / "scripts" / "icons_catalog.json"
+BASE_DIR = Path(__file__).resolve().parent.parent
+# Written by map_all_categories.py: icon id -> its Figma page and name.
+MANIFEST_PATH = BASE_DIR / "icons_clean" / "manifest.json"
 LIB_SRC = BASE_DIR / "lib" / "src"
-OUT_FILE = Path("icon_finder/lib/icon_registry.dart")
+OUT_FILE = BASE_DIR.parent / "icon_finder" / "lib" / "icon_registry.dart"
 
 DART_KEYWORDS = {
     'abstract', 'as', 'assert', 'async', 'await', 'base', 'break', 'case', 'catch',
@@ -43,32 +44,11 @@ for s in styles:
     icons_by_style[s] = matches
     print(f"Style '{s}': {len(matches)} icons")
 
-# Load catalog to extract category for each icon
-with open(CATALOG_PATH, 'r', encoding='utf-8') as f:
-    catalog = json.load(f)
-
-def clean_id(name: str) -> str:
-    name = re.sub(r'[^a-zA-Z0-9_\-\s]', '', name)
-    words = re.split(r'[-_\s]+', name)
-    words = [w for w in words if w]
-    if not words:
-        return "icon"
-    first = words[0].lower()
-    if first[0].isdigit():
-        first = "icon" + first
-    rest = [w.capitalize() for w in words[1:]]
-    return first + "".join(rest)
-
-cat_map = {} # clean_id -> (page_name, original_name)
-name_tracker = {}
-for item in catalog:
-    cid = clean_id(item['name'])
-    if cid in name_tracker:
-        name_tracker[cid] += 1
-        cid = f"{cid}_{name_tracker[cid]}"
-    else:
-        name_tracker[cid] = 1
-    cat_map[safe_id(cid)] = (item['page'], item['name'])
+# Category of each icon, from the same mapping that named its SVGs.
+with open(MANIFEST_PATH, 'r', encoding='utf-8') as f:
+    manifest = json.load(f)
+cat_map = {safe_id(cid): (info['page'], info['name'])
+           for cid, info in manifest.items()}
 
 # All unique icon names (union across all styles)
 all_names = sorted(list(set.union(*[icons_by_style[s] for s in styles])))
@@ -76,6 +56,10 @@ print(f"Total unique icon names across all styles: {len(all_names)}")
 
 # Generate human readable label from camelCase (e.g. "aiBrainTop" -> "AI Brain Top")
 def to_label(s: str) -> str:
+    # A repeated Figma name gets "_2", "_3": label it "Name (2)".
+    repeat = re.fullmatch(r'(.+)_(\d+)', s)
+    if repeat:
+        return f"{to_label(repeat.group(1))} ({repeat.group(2)})"
     # Handle ai prefix
     if s.startswith("ai") and len(s) > 2 and s[2].isupper():
         rest = re.sub(r'([A-Z])', r' \1', s[2:]).strip()
@@ -134,8 +118,8 @@ class IconItem {
             raw_category, original_name = page_info
             category = re.sub(r'\(.*?\)', '', raw_category).strip()
         else:
-            category = "General"
-            original_name = name
+            raise SystemExit(f"{name} is not in {MANIFEST_PATH.name}; "
+                             "re-run map_all_categories.py")
             
         label = to_label(name)
         

@@ -528,7 +528,8 @@ class _IconFinderScreenState extends State<IconFinderScreen> {
                         ],
                       ),
                       Text(
-                        '2,750+ icons across 7 styles & 36 categories',
+                        '${kAllIcons.length} icons across ${HoneIconStyle.values.length} '
+                        'styles & ${kAllCategories.length} categories',
                         style: TextStyle(
                           fontSize: 12,
                           color: isDark ? Colors.white60 : Colors.black54,
@@ -581,7 +582,8 @@ class _IconFinderScreenState extends State<IconFinderScreen> {
                           controller: _searchController,
                           focusNode: _searchFocusNode,
                           decoration: InputDecoration(
-                            hintText: 'Search 2,750 icons by name, ID or category...',
+                            hintText: 'Search ${kAllIcons.length} icons by name, ID or '
+                                'category...',
                             hintStyle: TextStyle(
                               color: isDark ? Colors.white38 : Colors.black38,
                               fontSize: 14,
@@ -636,7 +638,10 @@ class _IconFinderScreenState extends State<IconFinderScreen> {
                                 return DropdownMenuItem(
                                   value: cat,
                                   child: Text(
-                                    cat == 'All' ? 'All Categories (36)' : cat,
+                                    cat == 'All'
+                                        ? 'All Categories '
+                                            '(${kAllCategories.length})'
+                                        : cat,
                                     style: const TextStyle(fontSize: 13.5),
                                     overflow: TextOverflow.ellipsis,
                                   ),
