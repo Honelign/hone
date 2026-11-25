@@ -1,0 +1,33 @@
+# Sibling client app repositories (have their own separate git repositories)
+/lersha_base_mobile/
+/lersha_service_provider_app/
+/offtaker_app/
+
+# Flutter / Dart build artifacts and caches
+**/.dart_tool/
+**/build/
+**/.pub/
+**/.pub-cache/
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+**/.widget_preview/
+
+# IDE & OS
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
+
+# Staging & temp
+**/.staging/
+*.log
+
+# Firebase
+**/.firebase/
+
+# Raw unsorted Figma export dump (use hone_icons/icons_clean instead)
+hone_icons/icons_svg/
+
+# Node
+**/node_modules/

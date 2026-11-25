@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "clickup": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@cavort-it-systems/clickup-mcp"
+      ],
+      "env": {
+        "CLICKUP_API_TOKEN": "pk_216022749_DPEHY0ZNKP4NWIBQUVONSJRAT3RZUJ1T"
+      }
+    }
+  }
+}

@@ -1,0 +1,42 @@
+name: hone_icons
+description: "Hone design system icons package for Flutter applications."
+version: 0.0.1
+homepage: https://flutter-ai-playground-30390.web.app
+repository: https://github.com/Honelign/hone/tree/main/hone_icons
+
+environment:
+  sdk: ^3.12.1
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  fonts:
+    - family: HoneIconsBold
+      fonts:
+        - asset: fonts/HoneIconsBold.ttf
+    - family: HoneIconsBulk
+      fonts:
+        - asset: fonts/HoneIconsBulk.ttf
+    - family: HoneIconsDuotone
+      fonts:
+        - asset: fonts/HoneIconsDuotone.ttf
+    - family: HoneIconsGestalt
+      fonts:
+        - asset: fonts/HoneIconsGestalt.ttf
+    - family: HoneIconsLinear
+      fonts:
+        - asset: fonts/HoneIconsLinear.ttf
+    - family: HoneIconsOutline
+      fonts:
+        - asset: fonts/HoneIconsOutline.ttf
+    - family: HoneIconsTwoColor
+      fonts:
+        - asset: fonts/HoneIconsTwoColor.ttf

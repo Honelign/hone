@@ -1,0 +1,16 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M10 6.5L10 4.5" stroke-width="1.5" stroke-linecap="round" stroke="#13193A"/>
+<path d="M14 19.5L14 17.5" stroke-width="1.5" stroke-linecap="round" stroke="#13193A"/>
+<path opacity="0.45" d="M14 6.5L14 4" stroke-width="1.5" stroke-linecap="round" stroke="#13193A"/>
+<path opacity="0.45" d="M10 20L10 17.5" stroke-width="1.5" stroke-linecap="round" stroke="#13193A"/>
+<path d="M17.5 10L19.5 10" stroke-width="1.5" stroke-linecap="round" stroke="#13193A"/>
+<path d="M4.5 14L6.5 14" stroke-width="1.5" stroke-linecap="round" stroke="#13193A"/>
+<path opacity="0.45" d="M17.5 14L20 14" stroke-width="1.5" stroke-linecap="round" stroke="#13193A"/>
+<path opacity="0.45" d="M4 10L6.5 10" stroke-width="1.5" stroke-linecap="round" stroke="#13193A"/>
+<path opacity="0.45" d="M11.25 14.5H12.75C13.7165 14.5 14.5 13.7165 14.5 12.75V11.25C14.5 10.2835 13.7165 9.5 12.75 9.5H11.25C10.2835 9.5 9.5 10.2835 9.5 11.25V12.75C9.5 13.7165 10.2835 14.5 11.25 14.5Z" stroke-width="1.5" stroke-linejoin="round" stroke="#13193A"/>
+<path d="M4.5 14C4.5 14.6904 3.94036 15.25 3.25 15.25C2.55964 15.25 2 14.6904 2 14C2 13.3096 2.55964 12.75 3.25 12.75C3.94036 12.75 4.5 13.3096 4.5 14Z" stroke-width="1.5" stroke="#13193A"/>
+<path d="M11.25 3.25C11.25 3.94036 10.6904 4.5 10 4.5C9.30964 4.5 8.75 3.94036 8.75 3.25C8.75 2.55964 9.30964 2 10 2C10.6904 2 11.25 2.55964 11.25 3.25Z" stroke-width="1.5" stroke="#13193A"/>
+<path d="M22 10C22 10.6904 21.4404 11.25 20.75 11.25C20.0596 11.25 19.5 10.6904 19.5 10C19.5 9.30964 20.0596 8.75 20.75 8.75C21.4404 8.75 22 9.30964 22 10Z" stroke-width="1.5" stroke="#13193A"/>
+<path d="M15.25 20.75C15.25 21.4404 14.6904 22 14 22C13.3096 22 12.75 21.4404 12.75 20.75C12.75 20.0596 13.3096 19.5 14 19.5C14.6904 19.5 15.25 20.0596 15.25 20.75Z" stroke-width="1.5" stroke="#13193A"/>
+<path d="M10 17.5H14C15.933 17.5 17.5 15.933 17.5 14V10C17.5 8.067 15.933 6.5 14 6.5H10C8.067 6.5 6.5 8.067 6.5 10V14C6.5 15.933 8.067 17.5 10 17.5Z" stroke-width="1.5" stroke-linejoin="round" stroke="#13193A"/>
+</svg>
