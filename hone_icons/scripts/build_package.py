@@ -11,6 +11,49 @@ FONTS_DIR = BASE_DIR / "fonts"
 LIB_DIR = BASE_DIR / "lib"
 SRC_DIR = LIB_DIR / "src"
 
+DART_KEYWORDS = {
+    'abstract', 'as', 'assert', 'async', 'await', 'base', 'break', 'case',
+    'catch', 'class', 'const', 'continue', 'covariant', 'default',
+    'deferred', 'do', 'dynamic', 'else', 'enum', 'export', 'extends',
+    'extension', 'external', 'factory', 'false', 'final', 'finally', 'for',
+    'Function', 'get', 'hide', 'if', 'implements', 'import', 'in',
+    'interface', 'is', 'late', 'library', 'mixin', 'new', 'null', 'of', 'on',
+    'operator', 'part', 'required', 'rethrow', 'return', 'sealed', 'set',
+    'show', 'static', 'super', 'switch', 'sync', 'this', 'throw', 'true',
+    'try', 'type', 'typedef', 'var', 'void', 'when', 'while', 'with', 'yield',
+}
+
+
+def safe_id(name: str) -> str:
+    return f"icon{name.capitalize()}" if name in DART_KEYWORDS else name
+
+
+def to_font_ready_svgs(src_dir: Path, dest_dir: Path) -> int:
+    """Copies src_dir's SVGs into dest_dir, converted with picosvg.
+
+    Font glyphs are always filled with the nonzero rule and cannot draw
+    strokes. The Figma exports use fill-rule="evenodd" for holes (which
+    would fill in solid) and strokes in some styles (which would vanish).
+    picosvg rewrites each SVG as plain nonzero filled paths, so the glyph
+    looks like the SVG. Returns how many files were copied unconverted.
+    """
+    from picosvg.svg import SVG
+
+    if dest_dir.exists():
+        shutil.rmtree(dest_dir)
+    dest_dir.mkdir(parents=True)
+    failed = 0
+    for svg in sorted(src_dir.glob("*.svg")):
+        try:
+            content = SVG.parse(str(svg)).topicosvg().tostring()
+        except Exception as error:  # keep the icon, unconverted
+            failed += 1
+            print(f"  picosvg could not convert {svg.name}: {error}")
+            content = svg.read_text(encoding='utf-8')
+        (dest_dir / svg.name).write_text(content, encoding='utf-8')
+    return failed
+
+
 def build():
     print(f"Compiling icons from: {INPUT_DIR}")
     style_dirs = [d for d in INPUT_DIR.iterdir() if d.is_dir()]
@@ -30,12 +73,15 @@ def build():
             continue
         print(f"\nProcessing Style: {style} ({len(svgs)} icons)...")
         font_name = f"HoneIcons{style}"
+        font_ready_dir = BASE_DIR / ".staging" / f"pico_{style}"
+        failed = to_font_ready_svgs(src_dir=sdir, dest_dir=font_ready_dir)
+        print(f"  picosvg: {len(svgs) - failed} converted, {failed} as is")
         out_dir = BASE_DIR / ".staging" / f"out_{style}"
         if out_dir.exists():
             shutil.rmtree(out_dir)
         out_dir.mkdir(parents=True, exist_ok=True)
 
-        cmd = f"npx svgtofont --sources \"{sdir}\" --output \"{out_dir}\" --fontName {font_name}"
+        cmd = f"npx svgtofont --sources \"{font_ready_dir}\" --output \"{out_dir}\" --fontName {font_name}"
         res = subprocess.run(cmd, shell=True, capture_output=True, text=True)
 
         ttf_file = out_dir / f"{font_name}.ttf"
@@ -74,7 +120,7 @@ def build():
                 icon_id = sf.stem
                 hex_code = code_points.get(icon_id)
                 if hex_code:
-                    df.write(f"  static const IconData {icon_id} = IconData(0x{hex_code}, fontFamily: _fontFamily, fontPackage: _fontPackage);\n\n")
+                    df.write(f"  static const IconData {safe_id(icon_id)} = IconData(0x{hex_code}, fontFamily: _fontFamily, fontPackage: _fontPackage);\n\n")
             df.write("}\n")
         print(f"  Generated Dart: {dart_file.relative_to(BASE_DIR)}")
         active_styles.append(style)
@@ -110,7 +156,8 @@ def build():
     pubspec_content = f"""name: hone_icons
 description: "Hone design system icons package for Flutter applications."
 version: 0.0.1
-homepage: https://lersha.com
+homepage: https://flutter-ai-playground-30390.web.app
+repository: https://github.com/Honelign/hone/tree/main/hone_icons
 
 environment:
   sdk: ^3.12.1
